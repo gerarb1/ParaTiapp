@@ -3,7 +3,7 @@ package com.para_ti.chocolate.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Colores principales de tu app de chocolate
-val ChocolateBrown = Color(0xFF6F4E37)
+val ChocolateBrown = Color(0xFF491303)
 val DarkBackground = Color(0xFF121212)
 val GoldAccent = Color(0xFFD4AF37)
 val Cream = Color(0xFFF5DEB3)

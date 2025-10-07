@@ -1,6 +1,16 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// C:/Users/Usuario/Desktop/Appk/build.gradle.kts
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.androidApplication) apply false // Nota: asegúrate que el nombre coincida con tu TOML
+    alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.kotlinCompose) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.room) apply false // <-- ¡CORREGIDO! Ahora usa el alias
 }
