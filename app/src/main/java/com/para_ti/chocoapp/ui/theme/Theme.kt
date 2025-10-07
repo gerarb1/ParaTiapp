@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // Define your custom colors here
-val ChocolateBrown = Color(0xFF7B3F00) // Example: A dark brown color
-val GoldAccent = Color(0xFFFFD700)     // Example: A gold color
+val ChocolateBrown = Color(0xFF491303) // Example: A dark brown color
+val GoldAccent = Color(0xFFE28343)     // Example: A gold color
 val Cream = Color(0xFFFFFDD0)          // Example: A cream color
 val DarkBackground = Color(0xFF121212) // Example: A very dark background for dark theme
 
@@ -29,7 +29,7 @@ private val DarkColorScheme = darkColorScheme(
 
 // Esquema de colores claros
 private val LightColorScheme = lightColorScheme(
-    primary = ChocolateBrown,
+    primary = Color(491303),
     secondary = GoldAccent,
     tertiary = Cream,
     background = Color.White, // This was already Color.White
