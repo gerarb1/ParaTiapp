@@ -10,9 +10,9 @@ import com.para_ti.chocoapp.ui.welcome.WelcomeScreen
 
 // Define las "rutas" como constantes para evitar errores de tipeo
 object AppRoutes {
-    const val WELCOME = "welcome_screen"
-    const val SIGNUP = "signup_screen"
-    const val HOME = "home_screen"
+    const val WELCOME = "welcomeScreen"
+    const val SIGNUP = "LoginScreen"
+    const val HOME = "HomeScreen"
 }
 
 @Composable

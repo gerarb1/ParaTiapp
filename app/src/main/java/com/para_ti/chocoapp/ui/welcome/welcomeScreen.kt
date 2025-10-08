@@ -109,7 +109,7 @@ fun WelcomeScreen(
     }
 }
 
-// --- CORRECCIÓN 3: Actualizar el Preview para que compile ---
+// ---
 @Preview(showBackground = true)
 @Composable
 fun WelcomeScreenPreview() {
