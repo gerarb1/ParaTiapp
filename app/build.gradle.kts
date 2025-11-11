@@ -1,11 +1,14 @@
 
-    plugins {
+plugins {
         alias(libs.plugins.androidApplication) // Asegúrate de que los nombres coincidan con tu TOML
         alias(libs.plugins.kotlinAndroid)
         alias(libs.plugins.kotlinCompose)
         alias(libs.plugins.ksp)
         alias(libs.plugins.room)
         alias(libs.plugins.kotlinSerialization) // Necesitaremos añadir este al TOML
+        alias(libs.plugins.googleServices)
+        alias(libs.plugins.crashlytics)
+
     }
 
 
@@ -33,6 +36,7 @@ android {
     // CORREGIDO: Este bloque debe estar aquí
     buildFeatures {
         compose = true
+        viewBinding = true
     }
 
     buildTypes { // Es buena práctica tenerlo definido
@@ -66,6 +70,11 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 dependencies {
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.material3)
     // --- Room (Base de datos) ---
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:${room_version}")
@@ -96,4 +105,18 @@ dependencies {
 
 // --- Runtime y LiveData ---
     implementation("androidx.compose.runtime:runtime-livedata")
+    //fire base
+    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+// cloudinary
+    implementation("com.cloudinary:cloudinary-android:3.0.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.navigation:navigation-fragment:2.7.7")
+    implementation("androidx.navigation:navigation-ui:2.7.7")
 }

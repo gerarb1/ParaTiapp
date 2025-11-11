@@ -1,283 +1,54 @@
-package com.para_ti.chocoapp.ui.home // Considera mover HomeScreen a un paquete como com.para_ti.chocoapp.ui.home
+package com.para_ti.chocoapp.ui.home
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image // Importante para las imágenes
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items as lazyGridItems
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale // Importante para escalar imágenes
-import androidx.compose.ui.res.painterResource // Importante para cargar imágenes drawable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.para_ti.chocoapp.R // Necesario para R.drawable.*
-import com.para_ti.chocoapp.ui.theme.ChocolateBrown
-import com.para_ti.chocoapp.ui.theme.Cream
-import com.para_ti.chocoapp.ui.theme.DarkBackground
-import com.para_ti.chocoapp.ui.theme.Parati_chocolate_appTheme
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeScreen(
-    // Aquí podrías pasar callbacks de navegación o un ViewModel
-) {
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedBottomNavItem by remember { mutableStateOf(BottomNavRoute.Home) }
-
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar(
-                selectedRoute = selectedBottomNavItem,
-                onItemSelected = { selectedBottomNavItem = it }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DarkBackground)
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = "Chocolates Para Ti",
-                color = Cream,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            TextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Buscar chocolates...", color = Color.Gray) },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Cream.copy(alpha = 0.9f),
-                    unfocusedContainerColor = Cream.copy(alpha = 0.8f),
-                    disabledContainerColor = Cream.copy(alpha = 0.5f),
-                    cursorColor = ChocolateBrown,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = ChocolateBrown,
-                    unfocusedTextColor = ChocolateBrown
-                ),
-                shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PromotionalBanner() // Este no tiene emoji, así que se queda igual
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Categorías",
-                color = Cream,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            CategoriesSection()
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Populares",
-                color = Cream,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            PopularProductsSection()
-        }
-    }
-}
-
-@Composable
-fun PromotionalBanner() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ChocolateBrown.copy(alpha = 0.7f)),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        // Asumiendo que el texto del banner es intencional y no un emoji placeholder
-        Text(
-            text = "¡30% de descuento en cajas de regalo!", // Si este emoji también era un placeholder para una imagen, cámbialo.
-            modifier = Modifier.padding(16.dp),
-            color = Cream,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-    }
-}
-
-@Composable
-fun CategoriesSection() {
-    // En una app real, estos datos vendrían de un ViewModel y podrían incluir el resource ID de la imagen
-    val categories = listOf(
-        Category("Tabletas", R.drawable.logo_para_ti), // Reemplaza con tus IDs de imagen
-        Category("Bombones", R.drawable.logo_para_ti),
-        Category("Trufas", R.drawable.logo_para_ti),
-        Category("Cajas de Regalo", R.drawable.logo_para_ti),
-        Category("Especiales", R.drawable.logo_para_ti)
-    )
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(vertical = 8.dp)
-    ) {
-        items(categories) { category ->
-            CategoryItem(category = category)
-        }
-    }
-}
-
-// Data class para Categoría (incluye resource de imagen)
-data class Category(val name: String, val imageRes: Int) // imageRes sería @DrawableRes
-
-@Composable
-fun CategoryItem(category: Category) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.width(80.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape)
-                .background(Cream.copy(alpha = 0.2f)), // Un fondo sutil si la imagen no llena el círculo
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = category.imageRes),
-                contentDescription = category.name, // Descripción para accesibilidad
-                contentScale = ContentScale.Crop, // O ContentScale.Fit, según necesites
-                modifier = Modifier.fillMaxSize() // La imagen llena el Box circular
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = category.name,
-            color = Cream,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-fun PopularProductsSection() {
-    val popularProducts = listOf(
-        Product("Chocolate Amargo 70%", "Bs. 35", R.drawable.logo_para_ti), // Reemplaza con tus IDs
-        Product("Caja Premium Surtida", "Bs. 120", R.drawable.logo_para_ti),
-        Product("Trufas de Avellana", "Bs. 50", R.drawable.logo_para_ti),
-        Product("Bombones Artesanales", "Bs. 75", R.drawable.logo_para_ti)
-    )
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxHeight(),
-        contentPadding = PaddingValues(vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        lazyGridItems(popularProducts) { product ->
-            ProductCard(product = product)
-        }
-    }
-}
-
-// Data class para Producto (ya la tenías, asegúrate que imageRes es @DrawableRes)
-data class Product(val name: String, val price: String, @DrawableRes val imageRes: Int)
-
-@Composable
-fun ProductCard(product: Product) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Cream)
-    ) {
-        Column(
-            modifier = Modifier.padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = product.imageRes),
-                contentDescription = product.name,
-                contentScale = ContentScale.Crop, // O Fit, según el aspecto de tus imágenes
-                modifier = Modifier
-                    .size(100.dp) // Tamaño para la imagen del producto
-                    .clip(RoundedCornerShape(8.dp)) // Opcional: redondear esquinas de la imagen
-                    .background(ChocolateBrown.copy(alpha = 0.05f)) // Fondo muy sutil si la imagen tiene transparencias
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = product.name,
-                fontWeight = FontWeight.SemiBold,
-                color = ChocolateBrown,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.height(40.dp) // Para asegurar altura uniforme
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = product.price,
-                color = ChocolateBrown.copy(alpha = 0.8f),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
-
-// Enum para BottomNavRoute (sin cambios)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.firestore.FirebaseFirestore
+import com.para_ti.chocoapp.R
+import com.para_ti.chocoapp.domain.viewmodel.CartItem
+import com.para_ti.chocoapp.domain.viewmodel.ProductViewModel
+import com.para_ti.chocoapp.domain.viewmodel.CartViewModel
+import kotlinx.coroutines.tasks.await
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.para_ti.chocoapp.data.firebase.Product
+import com.para_ti.chocoapp.ui.theme.*
+import androidx.compose.material3.ripple
+// ------------------------------------------------------
+// ENUM DE NAVEGACIÓN INFERIOR
+// ------------------------------------------------------
 enum class BottomNavRoute(val route: String, val icon: ImageVector, val label: String) {
     Home("home", Icons.Filled.Home, "Inicio"),
-    Favorites("favorites", Icons.Filled.Favorite, "Favoritos"),
     Cart("cart", Icons.Filled.ShoppingCart, "Carrito"),
     Profile("profile", Icons.Filled.Person, "Perfil")
 }
 
-// BottomNavigationBar (sin cambios)
+// ------------------------------------------------------
+// BARRA DE NAVEGACIÓN INFERIOR
+// ------------------------------------------------------
 @Composable
 fun BottomNavigationBar(selectedRoute: BottomNavRoute, onItemSelected: (BottomNavRoute) -> Unit) {
-    NavigationBar(
-        containerColor = ChocolateBrown,
-        contentColor = Cream
-    ) {
-        val navItems = listOf(BottomNavRoute.Home, BottomNavRoute.Favorites, BottomNavRoute.Cart, BottomNavRoute.Profile)
+    NavigationBar(containerColor = ChocolateBrown, contentColor = Cream) {
+        val navItems = listOf(BottomNavRoute.Home, BottomNavRoute.Cart, BottomNavRoute.Profile)
         navItems.forEach { item ->
             NavigationBarItem(
                 selected = selectedRoute == item,
@@ -296,24 +67,356 @@ fun BottomNavigationBar(selectedRoute: BottomNavRoute, onItemSelected: (BottomNa
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF121212)
+// ------------------------------------------------------
+// BANNER PROMOCIONAL
+// ------------------------------------------------------
 @Composable
-fun HomeScreenPreview() {
-    Parati_chocolate_appTheme(darkTheme = true) {
-        HomeScreen()
+fun PromotionalBanner() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Box {
+            Image(
+                painter = painterResource(id = R.drawable.logo_para_ti),
+                contentDescription = "Banner promocional",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f))
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomStart
+            ) {
+                Text(
+                    text = "¡Ofertas de Temporada!",
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+        }
     }
 }
 
-/*
- Ejemplo de cómo podrías tener un drawable placeholder (e.g., res/drawable/ic_category_placeholder.xml):
- <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-  <path
-      android:fillColor="#CCCCCC" // Un color gris para el placeholder
-      android:pathData="M21,19V5c0,-1.1 -0.9,-2 -2,-2H5c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2zM8.5,13.5l2.5,3.01L14.5,12l4.5,6H5l3.5,-4.5z"/>
-</vector>
- */
+// ------------------------------------------------------
+// CHIP DE CATEGORÍA
+// ------------------------------------------------------
+@Composable
+fun CategoryChip(text: String, isSelected: Boolean, onSelected: () -> Unit) {
+    Button(
+        onClick = onSelected,
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isSelected) Cream else ChocolateBrown,
+            contentColor = if (isSelected) ChocolateBrown else Cream
+        ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = if (isSelected) 4.dp else 0.dp
+        ),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(text, fontWeight = FontWeight.Bold)
+    }
+}
+
+// ------------------------------------------------------
+// SECCIÓN DE CATEGORÍAS
+// ------------------------------------------------------
+@Composable
+fun CategoriesSection(
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit
+) {
+    val categories = listOf(
+        "Chocolate en bolsa",
+        "Chocolate en caja artesanal",
+        "Chocolate en envase de regalo",
+        "Grageas"
+    )
+    var selectedCategory by remember { mutableStateOf(categories.firstOrNull()) }
+
+    Column {
+        Text("Categorías", color = Cream, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp)
+        ) {
+            items(categories, key = { it }) { category ->
+                CategoryChip(
+                    text = category,
+                    isSelected = category == selectedCategory,
+                    onSelected = {
+                        selectedCategory = category
+                        onCategorySelected(category) //  Notificamos al HomeScreen
+                    }
+                )
+            }
+        }
+    }
+}
+
+
+// ------------------------------------------------------
+// DIALOGO PARA AGREGAR AL CARRITO
+// ------------------------------------------------------
+@Composable
+fun AddToCartDialog(product: Product, onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
+    var cantidad by remember { mutableStateOf(1) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { Button(onClick = { onConfirm(cantidad) }) { Text("Agregar") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } },
+        title = { Text("Agregar al carrito") },
+        text = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(product.nombre)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { if (cantidad > 1) cantidad-- }) { Text("-", fontSize = 20.sp) }
+                    Text("$cantidad", fontSize = 18.sp, modifier = Modifier.padding(horizontal = 8.dp))
+                    IconButton(onClick = { cantidad++ }) { Text("+", fontSize = 20.sp) }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Precio total: $${"%.2f".format(product.precio * cantidad)}")
+            }
+        }
+    )
+}
+
+// ------------------------------------------------------
+// CARD DE PRODUCTO DESDE FIREBASE
+// ------------------------------------------------------
+@Composable
+fun ProductCardFirebase(product: Product, cartViewModel: CartViewModel = viewModel()) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            //  CORREGIDO: ahora usa la nueva API compatible
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = true)
+            ) {
+                showDialog = true
+            },
+        colors = CardDefaults.cardColors(containerColor = Cream)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = rememberAsyncImagePainter(product.imagenUrl),
+                contentDescription = product.nombre,
+                modifier = Modifier.size(100.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(product.nombre, fontWeight = FontWeight.Bold, color = ChocolateBrown)
+            Text("$${product.precio}", color = ChocolateBrown)
+            Spacer(modifier = Modifier.height(4.dp))
+            Button(
+                onClick = { showDialog = true },
+                colors = ButtonDefaults.buttonColors(containerColor = ChocolateBrown, contentColor = Cream)
+            ) { Text("Agregar al carrito") }
+        }
+    }
+
+    if (showDialog) {
+        AddToCartDialog(
+            product = product,
+            onDismiss = { showDialog = false },
+            onConfirm = { cantidad ->
+                cartViewModel.addItem(
+                    CartItem(
+                        id = product.id,
+                        nombre = product.nombre,
+                        imagenUrl = product.imagenUrl,
+                        precio = product.precio,
+                        cantidad = cantidad
+                    )
+                )
+                showDialog = false
+            }
+        )
+    }
+}
+
+// ------------------------------------------------------
+// PERFIL DE USUARIO
+// ------------------------------------------------------
+@Composable
+fun ProfileScreen(onLogout: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            model = "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+            contentDescription = "Foto de perfil",
+            modifier = Modifier
+                .size(120.dp)
+                .clip(RoundedCornerShape(60.dp))
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Usuario", color = Cream, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onLogout, colors = ButtonDefaults.buttonColors(containerColor = ChocolateBrown)) {
+            Text("Cerrar sesión", color = Cream)
+        }
+    }
+}
+
+// ------------------------------------------------------
+// CARRITO VACÍO
+// ------------------------------------------------------
+@Composable
+fun CartScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Tu carrito está vacío", color = Cream, fontSize = 18.sp)
+    }
+}
+
+// ------------------------------------------------------
+// HOME: CONTENIDO PRINCIPAL
+// ------------------------------------------------------
+@Composable
+fun HomeContent(
+    innerPadding: PaddingValues,
+    searchQuery: String,
+    onSearchChange: (String) -> Unit,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit,
+    cartViewModel: CartViewModel
+) {
+    val productos = remember { mutableStateListOf<Product>() }
+    val db = FirebaseFirestore.getInstance()
+
+    // Cargar productos desde Firebase una sola vez
+    LaunchedEffect(Unit) {
+        val snapshot = db.collection("productos").get().await()
+        val fetched = snapshot.documents.mapNotNull { it.toObject(Product::class.java) }
+        productos.clear()
+        productos.addAll(fetched)
+    }
+
+    // 🔹 Filtrado dinámico
+    val productosFiltrados = productos.filter { product ->
+        val matchesSearch = product.nombre.contains(searchQuery, ignoreCase = true)
+        val matchesCategory = selectedCategory == "Todos" ||
+                product.categoria.equals(selectedCategory, ignoreCase = true)
+        matchesSearch && matchesCategory
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(DarkBackground)
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = "Chocolates Para Ti",
+            color = Cream,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        TextField(
+            value = searchQuery,
+            onValueChange = onSearchChange,
+            placeholder = { Text("Buscar chocolates...", color = Color.Gray) },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Cream.copy(alpha = 0.9f),
+                unfocusedContainerColor = Cream.copy(alpha = 0.8f),
+                cursorColor = ChocolateBrown,
+                focusedTextColor = ChocolateBrown,
+                unfocusedTextColor = ChocolateBrown
+            ),
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        PromotionalBanner()
+        Spacer(modifier = Modifier.height(16.dp))
+        CategoriesSection(
+            selectedCategory = selectedCategory,
+            onCategorySelected = onCategorySelected
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Productos", color = Cream, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier.fillMaxHeight(),
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(productosFiltrados) { product ->
+                ProductCardFirebase(product, cartViewModel)
+            }
+        }
+    }
+}
+
+// ------------------------------------------------------
+// HOME SCREEN
+// ------------------------------------------------------
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    cartViewModel: CartViewModel = viewModel(),
+    onNavigateToCart: () -> Unit,
+    onLogout: () -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedBottomNavItem by remember { mutableStateOf(BottomNavRoute.Home) }
+    var selectedCategory by remember { mutableStateOf("Todos") } // 🔹 Nueva variable de categoría seleccionada
+
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                selectedRoute = selectedBottomNavItem,
+                onItemSelected = { selectedItem ->
+                    selectedBottomNavItem = selectedItem
+                    if (selectedItem == BottomNavRoute.Cart) {
+                        onNavigateToCart()
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        when (selectedBottomNavItem) {
+            BottomNavRoute.Home -> HomeContent(
+                innerPadding = innerPadding,
+                searchQuery = searchQuery,
+                onSearchChange = { searchQuery = it },
+                selectedCategory = selectedCategory,
+                onCategorySelected = { selectedCategory = it },
+                cartViewModel = cartViewModel
+            )
+            BottomNavRoute.Profile -> ProfileScreen(onLogout = onLogout)
+            BottomNavRoute.Cart -> CartScreen()
+        }
+    }
+}
 

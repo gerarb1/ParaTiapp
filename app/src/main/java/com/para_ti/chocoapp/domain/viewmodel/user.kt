@@ -1,4 +1,4 @@
-package com.para_ti.chocoapp.domain.model
+package com.para_ti.chocoapp.domain.viewmodel
 
 data class User(
     val id: Int = 0,
