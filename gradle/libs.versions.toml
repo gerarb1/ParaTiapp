@@ -11,6 +11,15 @@ activityCompose = "1.9.0"
 composeBom = "2024.05.00"
 ksp = "2.0.0-1.0.21"
 room = "2.6.1"
+firebaseBom = "34.3.0"
+services = "4.4.3"
+crashlytics = "3.0.6"
+coil = "2.6.0"
+foundation = "1.9.4"
+firebaseCrashlyticsBuildtools = "3.0.6"
+ui = "1.9.4"
+roomCommonJvm = "2.8.3"
+material3 = "1.4.0"
 
 [libraries]
 # AndroidX Core
@@ -41,7 +50,15 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 #    La BOM también gestionará su versión.
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
-
+firebase-bom ={ module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom"}
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics"}
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -49,3 +66,6 @@ kotlinCompose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kot
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+googleServices = { id = "com.google.gms.google-services", version.ref = "services"}
+crashlytics = {id= "com.google.firebase.crashlytics", version.ref = "crashlytics"}

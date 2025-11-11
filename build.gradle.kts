@@ -8,9 +8,13 @@ buildscript {
 }
 
 plugins {
-    alias(libs.plugins.androidApplication) apply false // Nota: asegúrate que el nombre coincida con tu TOML
+    alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinCompose) apply false
     alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.room) apply false // <-- ¡CORREGIDO! Ahora usa el alias
+    alias(libs.plugins.room) apply false
+
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.crashlytics) apply false
+
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "431290084129",
+    "project_id": "para-ti-chocolate-app",
+    "storage_bucket": "para-ti-chocolate-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431290084129:android:4d969d9947069fb0f92c60",
+        "android_client_info": {
+          "package_name": "com.para_ti.chocoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVwhovaO4q9ZVhFdpoFgs4_N_PsENvUJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

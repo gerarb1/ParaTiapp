@@ -17,27 +17,75 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.para_ti.chocoapp.R
-import com.para_ti.chocoapp.data.local.AppDatabase
+import com.para_ti.chocoapp.domain.viewmodel.AuthViewModel
+import com.para_ti.chocoapp.domain.viewmodel.AuthState
 import com.para_ti.chocoapp.ui.theme.ChocolateBrown
 import com.para_ti.chocoapp.ui.theme.Cream
 import com.para_ti.chocoapp.ui.theme.Parati_chocolate_appTheme
-import kotlinx.coroutines.launch
-
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun LoginScreen(
-    onSignupSuccess: () -> Unit,
-    onNavigateBack: () -> Unit,
-    isPreview: Boolean = false
+    onUserLogin: () -> Unit,           // Navegar al Home
+    onAdminLogin: () -> Unit,          // Navegar al panel admin
+    onNavigateToRegister: () -> Unit,  // Navegar a registro
+    viewModel: AuthViewModel = viewModel()
 ) {
-    // Estados del formulario
+    // Estados locales para el formulario
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    // Estado para controlar si estamos cargando (para evitar múltiples clics)
+    var isLoading by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
-    val db = remember { AppDatabase.getDatabase(context) }
-    val userDao = db.userDao()
-    val coroutineScope = rememberCoroutineScope()
+    val authState by viewModel.authState.collectAsState()
+
+    // Definición de colores locales si no los tienes importados globalmente
+    // (Ajusta estos valores a los de tu tema si es necesario)
+    val ChocolateBrown = Color(0xFF3E2723)
+    val Cream = Color(0xFFFFFDD0)
+
+    // Manejo de Efectos Secundarios (Navegación y Errores)
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> {
+                isLoading = true
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                currentUser?.let { user ->
+                    FirebaseFirestore.getInstance()
+                        .collection("usuarios")
+                        .document(user.uid)
+                        .get()
+                        .addOnSuccessListener { doc ->
+                            isLoading = false
+                            val rol = doc.getString("rol")
+                            if (rol == "admin") {
+                                onAdminLogin()
+                            } else {
+                                onUserLogin()
+                            }
+                        }
+                        .addOnFailureListener {
+                            isLoading = false
+                            Toast.makeText(context, "Error al verificar permisos", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            is AuthState.Error -> {
+                isLoading = false
+                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            is AuthState.Loading -> {
+                isLoading = true
+            }
+            else -> {
+                isLoading = false
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -73,84 +121,89 @@ fun LoginScreen(
             textAlign = TextAlign.Center
         )
 
-        // Campo de correo
+        // Campo Email
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Nombre", color = Cream) },
+            label = { Text("Correo", color = Cream) },
             singleLine = true,
+            enabled = !isLoading, // Deshabilita si está cargando
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 focusedBorderColor = Cream,
-                unfocusedBorderColor = Cream.copy(alpha = 0.7f)
+                unfocusedBorderColor = Cream.copy(alpha = 0.7f),
+                cursorColor = Cream,
+                focusedLabelColor = Cream,
+                unfocusedLabelColor = Cream
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.height(8.dp))
 
-        // Campo de contraseña
+        // Campo Password
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña", color = Cream) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
+            enabled = !isLoading,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White,
                 focusedBorderColor = Cream,
-                unfocusedBorderColor = Cream.copy(alpha = 0.7f)
+                unfocusedBorderColor = Cream.copy(alpha = 0.7f),
+                cursorColor = Cream,
+                focusedLabelColor = Cream,
+                unfocusedLabelColor = Cream
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // Botón de inicio de sesión
+        // Botón de Login
         Button(
             onClick = {
-                coroutineScope.launch {
-                    val user = userDao.login(email, password)
-                    if (user != null) {
-                        Toast.makeText(context, "Bienvenido ${user.username}", Toast.LENGTH_SHORT).show()
-                        onSignupSuccess()
-                    } else {
-                        Toast.makeText(context, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
-                    }
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    viewModel.login(email, password)
+                } else {
+                    Toast.makeText(context, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
                 }
             },
+            enabled = !isLoading,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Cream,
-                contentColor = ChocolateBrown
+                contentColor = ChocolateBrown,
+                disabledContainerColor = Cream.copy(alpha = 0.5f)
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = ChocolateBrown,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Iniciar sesión")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { onNavigateBack() }) {
+        // Botón Ir a Registro
+        TextButton(onClick = { onNavigateToRegister() }) {
             Text(
-                text = "¿No tienes cuenta? Regístrate",
-                color = Cream
+                text = "¿No tienes una cuenta? Regístrate",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    Parati_chocolate_appTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            LoginScreen(
-                onSignupSuccess = {},
-                onNavigateBack = {},
-                isPreview = true
-            )
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() { Parati_chocolate_appTheme { Surface(modifier = Modifier.fillMaxSize()) { LoginScreen( onUserLogin = {}, onNavigateToRegister = {}, isPreview = true ) } } }

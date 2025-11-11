@@ -1,59 +1,138 @@
 package com.para_ti.chocoapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.para_ti.chocoapp.domain.viewmodel.AuthViewModel
+import com.para_ti.chocoapp.domain.viewmodel.ProfileViewModel
+import com.para_ti.chocoapp.domain.viewmodel.CartViewModel
+import com.para_ti.chocoapp.ui.adminView.AdminScreen
+import com.para_ti.chocoapp.ui.cart.CartScreen
 import com.para_ti.chocoapp.ui.home.HomeScreen
 import com.para_ti.chocoapp.ui.login.LoginScreen
+import com.para_ti.chocoapp.ui.profile.ProfileScreen
+import com.para_ti.chocoapp.ui.register.RegisterScreen
 import com.para_ti.chocoapp.ui.welcome.WelcomeScreen
 
-// Define las "rutas" como constantes para evitar errores de tipeo
 object AppRoutes {
     const val WELCOME = "welcomeScreen"
-    const val SIGNUP = "LoginScreen"
-    const val HOME = "HomeScreen"
+    const val LOGIN = "loginScreen"
+    const val REGISTER = "registerScreen"
+    const val HOME = "homeScreen"
+    const val ADMIN = "adminProductScreen"
+    const val PROFILE = "profileScreen"
+    const val CART = "cartScreen"
 }
 
 @Composable
 fun AppNavigation() {
-    // 1. Crea un NavController: este objeto controla la navegación
     val navController = rememberNavController()
 
-    // 2. Define el NavHost: este es el contenedor donde se mostrarán tus pantallas
+    // Los ViewModels se instancian aquí, lo cual está bien para el alcance del NavHost
+    val authViewModel: AuthViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
+    val cartViewModel: CartViewModel = viewModel()
+
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.WELCOME // 3. Define la pantalla inicial
+        startDestination = AppRoutes.WELCOME
     ) {
-        // 4. Define cada pantalla (composable) de tu aplicación
-        composable(route = AppRoutes.WELCOME) {
+
+        // --- Pantalla de Bienvenida ---
+        composable(AppRoutes.WELCOME) {
             WelcomeScreen(
-                // Define las acciones de navegación
-                onNavigateToSignup = { navController.navigate(AppRoutes.SIGNUP) },
+                onNavigateToSignup = { navController.navigate(AppRoutes.REGISTER) },
                 onNavigateToHome = {
-                    // Navega a Home y limpia el historial para que el usuario no pueda volver atrás con el botón de retroceso
                     navController.navigate(AppRoutes.HOME) {
                         popUpTo(AppRoutes.WELCOME) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = { navController.navigate(AppRoutes.LOGIN) }
+            )
+        }
+
+        // --- Pantalla de Login (Corregida) ---
+        composable(AppRoutes.LOGIN) {
+            // Nota: Asume que LoginScreen usa viewModel() internamente
+            // o que se lo pasas como parámetro si es necesario.
+            LoginScreen(
+                // 1. Éxito de login de USUARIO
+                onUserLogin = {
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.WELCOME) { inclusive = true }
+                    }
+                },
+                // 2. Éxito de login de ADMIN
+                onAdminLogin = {
+                    navController.navigate(AppRoutes.ADMIN) {
+                        popUpTo(AppRoutes.WELCOME) { inclusive = true }
+                    }
+                },
+                // 3. Botón para ir a registrarse
+                onNavigateToRegister = {
+                    navController.navigate(AppRoutes.REGISTER)
+                }
+            )
+        }
+
+        // --- Pantalla de Registro (Corregida) ---
+        composable(AppRoutes.REGISTER) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(AppRoutes.HOME) {
+                        popUpTo(AppRoutes.WELCOME) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.navigate(AppRoutes.LOGIN) {
+                        popUpTo(AppRoutes.REGISTER) { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(route = AppRoutes.SIGNUP) {
-            LoginScreen(
-                onSignupSuccess = {
-                    navController.navigate(AppRoutes.HOME) {
-                        popUpTo(AppRoutes.WELCOME) { inclusive = true }
+
+        composable(AppRoutes.HOME) {
+
+            HomeScreen(
+                cartViewModel = cartViewModel, // ✅ Pasamos el ViewModel compartido
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(AppRoutes.WELCOME) {
+                        popUpTo(AppRoutes.HOME) { inclusive = true }
                     }
                 },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateToCart = { navController.navigate(AppRoutes.CART) } // ✅ Navega al carrito
+            )
+        }
+        // --- Pantalla de Admin ---
+        composable(AppRoutes.ADMIN) {
+            AdminScreen() // Asume que usa su propio ViewModel
+        }
+
+        // --- Pantalla de Perfil ---
+        composable(AppRoutes.PROFILE) {
+            ProfileScreen(
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(AppRoutes.WELCOME) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onNavigateToAdmin = { //   callback
+                    navController.navigate(AppRoutes.ADMIN)
+                },
+                profileViewModel = profileViewModel
             )
         }
 
-        composable(route = AppRoutes.HOME) {
-            HomeScreen(
-                // Aquí podrías añadir más callbacks de navegación si HomeScreen necesita ir a otros lugares
-            )
+        // --- Pantalla de Carrito ---
+        composable(AppRoutes.CART) {
+            CartScreen(cartViewModel = cartViewModel)
         }
     }
 }

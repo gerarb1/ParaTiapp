@@ -1,4 +1,4 @@
-package com.para_ti.chocoapp.ui.product
+/*package com.para_ti.chocoapp.ui.product
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -90,3 +90,4 @@ fun ProductScreen(viewModel: ProductViewModel = viewModel()) {
         }
     }
 }
+*/
